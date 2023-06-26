@@ -212,7 +212,7 @@ function setupGraphics() {
     renderer.shadowMap.enabled = true;
     document.body.appendChild(VRButton.createButton(renderer));
 
-    ballinteractions = cursorballinteractions(renderer, scene, cursor, ball, ballbody);
+    ballinteractions = cursorballinteractions(renderer, scene, cursor, ball, ballbody, createBall);
 
     function render() {
         let deltaTime = clock.getDelta();
