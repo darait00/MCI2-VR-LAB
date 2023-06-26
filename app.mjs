@@ -2,7 +2,6 @@
 import * as THREE from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { AmmoDebugDrawer, AmmoDebugConstants, DefaultBufferSize } from 'three/addons/physics/AmmoDebugDrawer.js';
 import { mousecursor } from './mousecursor.mjs';
 import { cursorballinteractions } from './cursorballevents.mjs';
 
@@ -36,49 +35,49 @@ function add(geo, parent, x = 0, y = 0, z = 0) {
 function add3dmodel(scene, loader, model, x = 0, y = 0, z = 0) {
     loader.load(
         // resource URL
-        'models/gltf/'+model+'.gltf',
+        'models/gltf/' + model + '.gltf',
         // called when the resource is loaded
-        function ( gltf ) {
+        function (gltf) {
             const model = gltf.scene; // THREE.Group
-            gltf.scene.traverse( function( node ) {
+            gltf.scene.traverse(function (node) {
 
-                if ( node.isMesh ) { node.castShadow = true; }
-                if ( node.isMesh || node.isLight ) node.receiveShadow = true;
-        
-            } );
+                if (node.isMesh) { node.castShadow = true; }
+                if (node.isMesh || node.isLight) node.receiveShadow = true;
+
+            });
             model.position.setX(x);
             model.position.setY(y);
             model.position.setZ(z);
             model.scale.multiplyScalar(2);
-            scene.add( gltf.scene );
-    
+            scene.add(gltf.scene);
+
         },
         // called while loading is progressing
-        function ( xhr ) {
-    
-            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-    
+        function (xhr) {
+
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+
         },
         // called when loading has errors
-        function ( error ) {
-    
-            console.log( 'An error happened' );
-    
+        function (error) {
+
+            console.log('An error happened');
+
         }
     );
 }
 
-window.onload = function(){
-    Ammo().then( start );
+window.onload = function () {
+    Ammo().then(start);
 }
 
-function setupGraphics(){
+function setupGraphics() {
     //create clock for timing
     clock = new THREE.Clock();
-    
+
     //create the scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0xbfd1e5 );
+    scene.background = new THREE.Color(0xbfd1e5);
 
     //create the Model loader
     const loader = new GLTFLoader();
@@ -89,19 +88,19 @@ function setupGraphics(){
     scene.add(camera);
 
     //Add hemisphere light
-    let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.1 );
-    hemiLight.color.setHSL( 0.6, 0.6, 0.6 );
-    hemiLight.groundColor.setHSL( 0.1, 1, 0.4 );
-    hemiLight.position.set( 0, 50, 0 );
-    scene.add( hemiLight );
-    const light = new THREE.AmbientLight( 0x404040 ); // soft white light
-    scene.add( light );
+    let hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.1);
+    hemiLight.color.setHSL(0.6, 0.6, 0.6);
+    hemiLight.groundColor.setHSL(0.1, 1, 0.4);
+    hemiLight.position.set(0, 50, 0);
+    scene.add(hemiLight);
+    const light = new THREE.AmbientLight(0x404040); // soft white light
+    scene.add(light);
 
     //Add directional light
-    let dirLight = new THREE.DirectionalLight( 0x9a5000 , 1);
-    dirLight.color.setHSL( 0.1, 1, 0.95 );
-    dirLight.position.set( -1, 1.75, 1 );
-    dirLight.position.multiplyScalar( 100 );
+    let dirLight = new THREE.DirectionalLight(0x9a5000, 1);
+    dirLight.color.setHSL(0.1, 1, 0.95);
+    dirLight.position.set(-1, 1.75, 1);
+    dirLight.position.multiplyScalar(100);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 2048;
     dirLight.shadow.mapSize.height = 2048;
@@ -111,18 +110,18 @@ function setupGraphics(){
     dirLight.shadow.camera.top = d;
     dirLight.shadow.camera.bottom = -d;
     dirLight.shadow.camera.far = 13500;
-    scene.add( dirLight );
+    scene.add(dirLight);
 
     // Skybox
-    let skyGeo = new THREE.SphereGeometry(50, 24, 24); 
-    var texloader  = new THREE.TextureLoader(),
-    texture = texloader.load( "./images/skybox.jpg" );
+    let skyGeo = new THREE.SphereGeometry(50, 24, 24);
+    var texloader = new THREE.TextureLoader(),
+        texture = texloader.load("./images/skybox.jpg");
     var skymat = new THREE.MeshBasicMaterial({
         map: texture, // This will be used as the base texture
         emissiveMap: texture // Use the same texture as emissive map
     });
     var sky = new THREE.Mesh(skyGeo, skymat);
-    sky.rotation.set(0,-Math.PI/1.75,0)
+    sky.rotation.set(0, -Math.PI / 1.75, 0)
     sky.material.side = THREE.BackSide;
     scene.add(sky);
 
@@ -134,24 +133,24 @@ function setupGraphics(){
 
     //Cans
     const canPos = [
-        {x:-.3, y:.75, z:-5},
-        {x:-.1, y:.75, z:-5},
-        {x:.1, y:.75, z:-5},
-        {x:.3, y:.75, z:-5},
-        {x:-.2, y:1, z:-5},
-        {x:0, y:1, z:-5},
-        {x:.2, y:1, z:-5},
-        {x:-.1, y:1.19, z:-5},
-        {x:.1, y:1.19, z:-5},
-        {x:0, y:1.41, z:-5}
+        { x: -.3, y: .75, z: -5 },
+        { x: -.1, y: .75, z: -5 },
+        { x: .1, y: .75, z: -5 },
+        { x: .3, y: .75, z: -5 },
+        { x: -.2, y: 1, z: -5 },
+        { x: 0, y: 1, z: -5 },
+        { x: .2, y: 1, z: -5 },
+        { x: -.1, y: 1.19, z: -5 },
+        { x: .1, y: 1.19, z: -5 },
+        { x: 0, y: 1.41, z: -5 }
     ];
-    canPos.forEach(async (pos)=>{
+    canPos.forEach(async (pos) => {
         await createCan(loader, pos.x, pos.y, pos.z)
     });
 
     // Shelf under cans
-    createShelf();  
-    
+    createShelf();
+
     // Ball
     //let ballgeo = new THREE.IcosahedronGeometry(0.05, 3);
     //ball = add(ballgeo, scene, 0, 3, -0.5);
@@ -163,7 +162,7 @@ function setupGraphics(){
     createBallBox();
     // Create an invisible box
     const geometry = new THREE.BoxGeometry(3, 5, 10); // Dimensions of the box
-    const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const invisibleBox = new THREE.Mesh(geometry, material);
     invisibleBox.position.set(0, 0, -2.5);
     invisibleBox.visible = false; // Make the box invisible
@@ -202,10 +201,10 @@ function setupGraphics(){
         antialias: true,
         alpha: false
     });
-    renderer.setClearColor( 0xbfd1e5, 1 );
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
+    renderer.setClearColor(0xbfd1e5, 1);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
     renderer.gammaInput = true;
     renderer.gammaOutput = true;
@@ -214,35 +213,35 @@ function setupGraphics(){
     document.body.appendChild(VRButton.createButton(renderer));
 
     ballinteractions = cursorballinteractions(renderer, scene, cursor, ball, ballbody);
-    
+
     function render() {
         let deltaTime = clock.getDelta();
         ball.position.setFromMatrixPosition(ball.matrix);
         ballinteractions.update();
-        updatePhysics( deltaTime );
+        updatePhysics(deltaTime);
 
         renderer.render(scene, camera);
     }
     renderer.setAnimationLoop(render);
 }
 
-function renderFrame(){
+function renderFrame() {
 
     let deltaTime = clock.getDelta();
 
-    updatePhysics( deltaTime );
+    updatePhysics(deltaTime);
 
-    renderer.render( scene, camera );
+    renderer.render(scene, camera);
 
-    requestAnimationFrame( renderFrame );
+    requestAnimationFrame(renderFrame);
 
 }
 
 // Create Physical Models
-async function createCan(loader, x, y, z){
-    
-    let pos = {x: x, y: y, z: z};
-    let quat = {x: 0, y: 0, z: 0, w: 1};
+async function createCan(loader, x, y, z) {
+
+    let pos = { x: x, y: y, z: z };
+    let quat = { x: 0, y: 0, z: 0, w: 1 };
     let mass = 1;
 
     //threeJS Section
@@ -250,19 +249,19 @@ async function createCan(loader, x, y, z){
         // resource URL
         'models/gltf/scene.gltf',
         // called when the resource is loaded
-        function ( gltf ) {
+        function (gltf) {
             const model = gltf.scene; // THREE.Group
-            gltf.scene.traverse( function( node ) {
+            gltf.scene.traverse(function (node) {
 
-                if ( node.isMesh ) { node.castShadow = true; }
-                if ( node.isMesh || node.isLight ) node.receiveShadow = true;
-        
-            } );
+                if (node.isMesh) { node.castShadow = true; }
+                if (node.isMesh || node.isLight) node.receiveShadow = true;
+
+            });
             model.position.setX(pos.x);
             model.position.setY(pos.y);
             model.position.setZ(pos.z);
             model.scale.multiplyScalar(2);
-            scene.add( gltf.scene );            
+            scene.add(gltf.scene);
 
             // Ammo.js Section
             const startTransform = new Ammo.btTransform();
@@ -287,17 +286,17 @@ async function createCan(loader, x, y, z){
     );
 }
 
-function createBall(){
-    let pos = {x: .5, y: 1.05, z: -.5};
+function createBall() {
+    let pos = { x: .5, y: 1.05, z: -.5 };
     let radius = 0.05;
-    let quat = {x: 0, y: 0, z: 0, w: 1};
+    let quat = { x: 0, y: 0, z: 0, w: 1 };
     let mass = 1;
 
     //threeJS Section
-    let ballmesh = new THREE.Mesh(new THREE.SphereGeometry(radius), new THREE.MeshPhongMaterial({color: 0xff0505}));
+    let ballmesh = new THREE.Mesh(new THREE.SphereGeometry(radius), new THREE.MeshPhongMaterial({ color: 0xff0505 }));
 
     ballmesh.position.set(pos.x, pos.y, pos.z);
-    
+
     ballmesh.castShadow = true;
     ballmesh.receiveShadow = true;
 
@@ -307,31 +306,31 @@ function createBall(){
     //Ammojs Section
     let transform = new Ammo.btTransform();
     transform.setIdentity();
-    transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
-    transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
-    let motionState = new Ammo.btDefaultMotionState( transform );
+    transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+    transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+    let motionState = new Ammo.btDefaultMotionState(transform);
 
-    let colShape = new Ammo.btSphereShape( radius );
-    colShape.setMargin( 0.01 );
+    let colShape = new Ammo.btSphereShape(radius);
+    colShape.setMargin(0.01);
 
-    let localInertia = new Ammo.btVector3( 0, 0, 0 );
-    colShape.calculateLocalInertia( mass, localInertia );
+    let localInertia = new Ammo.btVector3(0, 0, 0);
+    colShape.calculateLocalInertia(mass, localInertia);
 
-    let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
-    let body = new Ammo.btRigidBody( rbInfo );
-    
-    physicsWorld.addRigidBody( body );
-    
+    let rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, colShape, localInertia);
+    let body = new Ammo.btRigidBody(rbInfo);
+
+    physicsWorld.addRigidBody(body);
+
     ballmesh.userData.physicsBody = body;
     rigidBodies.push(ballmesh);
-    return {ballmesh, body};
+    return { ballmesh, body };
 }
 
-function createGround(){
+function createGround() {
     var grid = new THREE.GridHelper(15, 15);
     scene.add(grid);
     const groundGeometry = new THREE.PlaneGeometry(15, 15);
-    const groundMaterial = new THREE.MeshStandardMaterial({color: 0x434343, side: THREE.DoubleSide}); // Green color
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x434343, side: THREE.DoubleSide }); // Green color
     const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
     groundMesh.rotation.x = -Math.PI / 2; // Rotate the ground to be horizontal
     scene.add(groundMesh);
@@ -349,9 +348,9 @@ function createGround(){
     physicsWorld.addRigidBody(groundRigidBody);
 }
 
-function createShelf(){
+function createShelf() {
     let targetshelf = new THREE.BoxGeometry(2, 1.55, .75);
-    const groundMaterial = new THREE.MeshStandardMaterial({color: 0x434343, side: THREE.DoubleSide}); // Green color
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x434343, side: THREE.DoubleSide }); // Green color
     let shelf = new THREE.Mesh(targetshelf, groundMaterial);
     shelf.position.set(0, 0, -5);
     shelf.updateMatrix();
@@ -371,9 +370,9 @@ function createShelf(){
     physicsWorld.addRigidBody(shelfRigidBody);
 }
 
-function createBallBox(){
+function createBallBox() {
     let targetshelf = new THREE.BoxGeometry(.5, 1.5, .5);
-    const groundMaterial = new THREE.MeshStandardMaterial({color: 0x434343, side: THREE.DoubleSide}); // Green color
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x434343, side: THREE.DoubleSide }); // Green color
     let shelf = new THREE.Mesh(targetshelf, groundMaterial);
     shelf.position.set(.5, 0, -.5);
     shelf.updateMatrix();
@@ -394,36 +393,36 @@ function createBallBox(){
 }
 
 // Game Mechanics
-function setupPhysicsWorld(){
+function setupPhysicsWorld() {
 
-    let collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration(),
-        dispatcher              = new Ammo.btCollisionDispatcher(collisionConfiguration),
-        overlappingPairCache    = new Ammo.btDbvtBroadphase(),
-        solver                  = new Ammo.btSequentialImpulseConstraintSolver();
+    let collisionConfiguration = new Ammo.btDefaultCollisionConfiguration(),
+        dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration),
+        overlappingPairCache = new Ammo.btDbvtBroadphase(),
+        solver = new Ammo.btSequentialImpulseConstraintSolver();
 
-    physicsWorld           = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+    physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
     physicsWorld.setGravity(new Ammo.btVector3(0, -9.81, 0));
 }
 
-function updatePhysics( deltaTime ){
+function updatePhysics(deltaTime) {
 
     // Step world
-    physicsWorld.stepSimulation( deltaTime, 10 );
+    physicsWorld.stepSimulation(deltaTime, 10);
 
     // Update rigid bodies
-    for ( let i = 0; i < rigidBodies.length; i++ ) {
-        let objThree = rigidBodies[ i ];
+    for (let i = 0; i < rigidBodies.length; i++) {
+        let objThree = rigidBodies[i];
         let objAmmo = objThree.userData.physicsBody;
         let ms = objAmmo.getMotionState();
 
         if (objThree.userData.isBeingGrabbed) continue;
 
-        if ( ms ) {
-            ms.getWorldTransform( tmpTrans );
+        if (ms) {
+            ms.getWorldTransform(tmpTrans);
             let p = tmpTrans.getOrigin();
             let q = tmpTrans.getRotation();
-            objThree.position.set( p.x(), p.y(), p.z() );
-            objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
+            objThree.position.set(p.x(), p.y(), p.z());
+            objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
 
         }
     }

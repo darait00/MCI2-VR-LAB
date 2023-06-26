@@ -45,7 +45,7 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
     let { controller1, controller2 } = createVRcontrollers(scene, renderer, (current, src) => {
         // called if/when controllers connect
         cursor.matrixAutoUpdate = false;
-        cursor.visible = false;
+        cursor.visible = true;
         last_active_controller = current;
         last_active_inputsource = src;
         console.log(`connected ${src.handedness} device`);
@@ -53,8 +53,30 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
     });
 
 
+    function snapBallToCursor() {
+        // Update the position of the ball's physics body to follow the controller using matrices
+        tempMatrix.copy(cursor.matrix.clone()); // Copy the controller's matrix
+
+        ball.matrix.copy(cursor.matrix.clone());
+        ball.matrix.decompose(ball.position, ball.quaternion, ball.scale);
+
+        // Extract position and quaternion from the matrix
+        let pos = new THREE.Vector3();
+        let quat = new THREE.Quaternion();
+        pos.setFromMatrixPosition(tempMatrix);
+        quat.setFromRotationMatrix(tempMatrix);
+
+        // Update Ammo.js transform
+        transform.setIdentity();
+        transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+        transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+        ballPhysicsBody.setWorldTransform(transform);
+        ballPhysicsBody.setActivationState(4); // Prevent the ball from deactivating
+        ball.userData.isBeingGrabbed = true;
+    }
+
     function update() {
-        
+
         if (last_active_controller) {
             cursor.matrix.copy(last_active_controller.matrix);
             grabbed = controller1.controller.userData.isSqueezeing || controller2.controller.userData.isSqueezeing;
@@ -65,31 +87,13 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
 
         if (grabbed && position.distanceTo(ball.position) < 0.1) {
             ballGrabbed = true;
+            snapBallToCursor();
             //ball.matrix.copy(cursor.matrix.clone());
         } else if (grabbed && ballGrabbed) {
             console.log("ball grabbed");
             //ball.matrix.copy(cursor.matrix.clone());
-            // Update the position of the ball's physics body to follow the controller using matrices
-            tempMatrix.copy(cursor.matrix.clone()); // Copy the controller's matrix
 
-            ball.matrix.copy(cursor.matrix.clone());
-            ball.matrix.decompose(ball.position, ball.quaternion, ball.scale);
-
-            // Extract position and quaternion from the matrix
-            let pos = new THREE.Vector3();
-            let quat = new THREE.Quaternion();
-            pos.setFromMatrixPosition(tempMatrix);
-            quat.setFromRotationMatrix(tempMatrix);
-
-            // Update Ammo.js transform
-            transform.setIdentity();
-            transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-            transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-            ballPhysicsBody.setWorldTransform(transform);
-            ballPhysicsBody.setActivationState(4); // Prevent the ball from deactivating
-            ball.userData.isBeingGrabbed = true;
-
-
+            snapBallToCursor();
 
             // Added Throwing logic
             let currentTime = performance.now();
