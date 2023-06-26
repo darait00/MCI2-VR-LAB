@@ -85,31 +85,29 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
         }
         cursor.matrix.decompose(position, rotation, scale);
 
-        if (grabbed && position.distanceTo(ball.position) < 0.1) {
-            ballGrabbed = true;
-            snapBallToCursor();
-            //ball.matrix.copy(cursor.matrix.clone());
-        } else if (grabbed && ballGrabbed) {
+
+        if (grabbed && ballGrabbed) {
             console.log("ball grabbed");
             //ball.matrix.copy(cursor.matrix.clone());
-
             snapBallToCursor();
-
             // Added Throwing logic
             let currentTime = performance.now();
             let deltaTime = (currentTime - prevTime) / 1000; // Convert to seconds
+
+
+            //let deltaTime = new THREE.Clock().getDelta();
             let velocity = position.clone().sub(prevPosition).divideScalar(deltaTime);
 
-            if (velocity.length() > 7) {
-                console.log("Throw motion recognized");
+            if (velocity.length() > 3) {
+                console.log("Throw motion recognized" + console.log(velocity.length()));
 
                 ballGrabbed = false;
                 ballPhysicsBody.setActivationState(1); // Prevent the ball from deactivating
                 ball.userData.isBeingGrabbed = false;
                 // Implement your throwing logic here
                 // Apply force to the ball when released
-                let force = new Ammo.btVector3(0, 0, -500); // Example force vector (0, 10, 0)
-                ball.userData.physicsBody.applyCentralForce(force);
+                let force = new Ammo.btVector3(0, 0, -5); // Example force vector (0, 10, 0)
+                ball.userData.physicsBody.setLinearVelocity(force);
                 Ammo.destroy(force); // Clean up the force vector
 
             }
@@ -117,6 +115,11 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
             prevPosition.copy(position);
             prevTime = currentTime;
 
+        } else if (grabbed && position.distanceTo(ball.position) < 0.1) {
+            ballGrabbed = true;
+            snapBallToCursor();
+            prevTime = performance.now();
+            //ball.matrix.copy(cursor.matrix.clone());
         } else {
             ballGrabbed = false;
             ballPhysicsBody.setActivationState(1); // Prevent the ball from deactivating

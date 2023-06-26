@@ -349,7 +349,7 @@ function createGround() {
 }
 
 function createShelf() {
-    let targetshelf = new THREE.BoxGeometry(2, 1.55, .75);
+    let targetshelf = new THREE.BoxGeometry(2, 2.55, .75);
     const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x434343, side: THREE.DoubleSide }); // Green color
     let shelf = new THREE.Mesh(targetshelf, groundMaterial);
     shelf.position.set(0, 0, -5);
