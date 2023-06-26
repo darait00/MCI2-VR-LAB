@@ -52,7 +52,6 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
         renderer.xr.enabled = true;
     });
 
-
     function snapBallToCursor() {
         // Update the position of the ball's physics body to follow the controller using matrices
         tempMatrix.copy(cursor.matrix.clone()); // Copy the controller's matrix
@@ -98,7 +97,7 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
             //let deltaTime = new THREE.Clock().getDelta();
             let velocity = position.clone().sub(prevPosition).divideScalar(deltaTime);
 
-            if (velocity.length() > 3) {
+            if (velocity.length() > 2) {
                 console.log("Throw motion recognized" + console.log(velocity.length()));
 
                 ballGrabbed = false;
@@ -106,8 +105,22 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
                 ball.userData.isBeingGrabbed = false;
                 // Implement your throwing logic here
                 // Apply force to the ball when released
-                let force = new Ammo.btVector3(0, 0, -5); // Example force vector (0, 10, 0)
-                ball.userData.physicsBody.setLinearVelocity(force);
+
+
+
+                // Power
+                const forceMagnitude = 50;
+                // Direction
+                const forceDirection = new THREE.Vector3(0, 0, -1);
+
+                forceDirection.applyQuaternion(rotation);
+                forceDirection.multiplyScalar(forceMagnitude);
+
+                const force = new Ammo.btVector3(forceDirection.x, forceDirection.y, forceDirection.z);
+                ball.userData.physicsBody.applyCentralForce(force);
+
+                //let force = new Ammo.btVector3(0, 0, -5); // Example force vector (0, 10, 0)
+                //ball.userData.physicsBody.applyCentralForce(force);
                 Ammo.destroy(force); // Clean up the force vector
 
             }
@@ -133,5 +146,5 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
             Ammo.destroy(transform);
         }
     }
-    return { update };
+    return { update, setParams };
 }
