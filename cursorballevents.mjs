@@ -38,14 +38,13 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
     let transform = new Ammo.btTransform();
     let tempMatrix = new THREE.Matrix4(); // Temporary THREE.Matrix4 for calculations
     let prevPosition = new THREE.Vector3();
-    let prevTime = performance.now();
 
 
     let last_active_controller, last_active_inputsource;
     let { controller1, controller2 } = createVRcontrollers(scene, renderer, (current, src) => {
         // called if/when controllers connect
         cursor.matrixAutoUpdate = false;
-        cursor.visible = true;
+        cursor.visible = false;
         last_active_controller = current;
         last_active_inputsource = src;
         console.log(`connected ${src.handedness} device`);
@@ -74,7 +73,7 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
         ball.userData.isBeingGrabbed = true;
     }
 
-    function update() {
+    function update(deltaTime) {
 
         if (last_active_controller) {
             cursor.matrix.copy(last_active_controller.matrix);
@@ -90,9 +89,6 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
             //ball.matrix.copy(cursor.matrix.clone());
             snapBallToCursor();
             // Added Throwing logic
-            let currentTime = performance.now();
-            let deltaTime = (currentTime - prevTime) / 1000; // Convert to seconds
-
 
             //let deltaTime = new THREE.Clock().getDelta();
             let velocity = position.clone().sub(prevPosition).divideScalar(deltaTime);
@@ -126,12 +122,10 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
             }
             // Save the current position and time for the next frame
             prevPosition.copy(position);
-            prevTime = currentTime;
 
         } else if (grabbed && position.distanceTo(ball.position) < 0.1) {
             ballGrabbed = true;
             snapBallToCursor();
-            prevTime = performance.now();
             //ball.matrix.copy(cursor.matrix.clone());
         } else {
             ballGrabbed = false;
@@ -146,5 +140,5 @@ export function cursorballinteractions(renderer, scene, cursor, ball, rdgbody) {
             Ammo.destroy(transform);
         }
     }
-    return { update, setParams };
+    return { update };
 }
