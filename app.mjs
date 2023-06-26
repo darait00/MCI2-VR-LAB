@@ -133,16 +133,16 @@ function setupGraphics() {
 
     //Cans
     const canPos = [
-        { x: -.3, y: .75, z: -3 },
-        { x: -.1, y: .75, z: -3 },
-        { x: .1, y: .75, z: -3 },
-        { x: .3, y: .75, z: -3 },
-        { x: -.2, y: 1, z: -3 },
-        { x: 0, y: 1, z: -3 },
-        { x: .2, y: 1, z: -3 },
-        { x: -.1, y: 1.19, z: -3 },
-        { x: .1, y: 1.19, z: -3 },
-        { x: 0, y: 1.41, z: -3 }
+        { x: -.3, y: .54, z: -2.5 },
+        { x: -.1, y: .54, z: -2.5 },
+        { x: .1, y: .54, z: -2.5 },
+        { x: .3, y: .54, z: -2.5 },
+        { x: -.2, y: .79, z: -2.5 },
+        { x: 0, y: .79, z: -2.5 },
+        { x: .2, y: .79, z: -2.5 },
+        { x: -.1, y: .98, z: -2.5 },
+        { x: .1, y: .98, z: -2.5 },
+        { x: 0, y: 1.2, z: -2.5 }
     ];
     canPos.forEach(async (pos) => {
         await createCan(loader, pos.x, pos.y, pos.z)
@@ -287,7 +287,7 @@ async function createCan(loader, x, y, z) {
 }
 
 function createBall() {
-    let pos = { x: .5, y: 1.05, z: -.5 };
+    let pos = { x: 0, y: 1.05, z: -.5 };
     let radius = 0.05;
     let quat = { x: 0, y: 0, z: 0, w: 1 };
     let mass = 1;
@@ -349,20 +349,20 @@ function createGround() {
 }
 
 function createShelf() {
-    let targetshelf = new THREE.BoxGeometry(2, 1.55, .75);
+    let targetshelf = new THREE.BoxGeometry(2, 1.05, .75);
     const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x434343, side: THREE.DoubleSide }); // Green color
     let shelf = new THREE.Mesh(targetshelf, groundMaterial);
-    shelf.position.set(0, 0, -3);
+    shelf.position.set(0, 0, -2.5);
     shelf.updateMatrix();
     shelf.matrixAutoUpdate = false;
     scene.add(shelf)
 
     const shelfTransform = new Ammo.btTransform();
     shelfTransform.setIdentity();
-    shelfTransform.setOrigin(new Ammo.btVector3(0, 0, -3)); // Position of the shelf plane
+    shelfTransform.setOrigin(new Ammo.btVector3(0, 0, -2.5)); // Position of the shelf plane
     const shelfMass = 0; // Setting the mass to 0 makes it static
     const shelfLocalInertia = new Ammo.btVector3(0, 0, 0);
-    const shelfShape = new Ammo.btBoxShape(new Ammo.btVector3(1, 0.675, 0.375));
+    const shelfShape = new Ammo.btBoxShape(new Ammo.btVector3(1, 0.44, 0.375));
     shelfShape.calculateLocalInertia(shelfMass, shelfLocalInertia);
     const shelfMotionState = new Ammo.btDefaultMotionState(shelfTransform);
     const shelfRigidBodyInfo = new Ammo.btRigidBodyConstructionInfo(shelfMass, shelfMotionState, shelfShape, shelfLocalInertia);
@@ -374,14 +374,14 @@ function createBallBox() {
     let targetshelf = new THREE.BoxGeometry(.5, 1.5, .5);
     const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x434343, side: THREE.DoubleSide }); // Green color
     let shelf = new THREE.Mesh(targetshelf, groundMaterial);
-    shelf.position.set(.5, 0, -.5);
+    shelf.position.set(0, 0, -.5);
     shelf.updateMatrix();
     shelf.matrixAutoUpdate = false;
     scene.add(shelf)
 
     const shelfTransform = new Ammo.btTransform();
     shelfTransform.setIdentity();
-    shelfTransform.setOrigin(new Ammo.btVector3(.5, 0, -.5)); // Position of the shelf plane
+    shelfTransform.setOrigin(new Ammo.btVector3(0, 0, -.5)); // Position of the shelf plane
     const shelfMass = 0; // Setting the mass to 0 makes it static
     const shelfLocalInertia = new Ammo.btVector3(0, 0, 0);
     const shelfShape = new Ammo.btBoxShape(new Ammo.btVector3(.25, 0.7475, .25));
